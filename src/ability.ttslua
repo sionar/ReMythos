@@ -8,8 +8,8 @@ function Ability:new(name, user, source, played_round_num)
     source = source, -- {is_starting = false, from_ability = nil, from_user = nil}
     played_round_num = played_round_num,
     is_tradable = true,
-    is_copyable = ability[name].is_copyable or true,
-    is_affectable = ability[name].is_affectable or true,
+    is_copyable = ability[name].is_copyable,
+    is_affectable = ability[name].is_affectable,
     side_1_conditions = ability[name].side_1_conditions or nil,
     side_1_reaction_triggers = ability[name].side_1_reaction_triggers or nil,
     side_1_resolve_steps = ability[name].side_1_resolve_steps or nil,
@@ -34,6 +34,8 @@ ability_db = {
   },
 
   'Saboteur' = {
+    is_copyable = true,
+    is_affectable = true,
     side_1_reaction_triggers = {{'reveal'},},
     side_1_resolve_steps = {
       {action = 'reveal', active_trigger = 'reveal'},
@@ -42,6 +44,8 @@ ability_db = {
   },
 
   'Puppeteer' = {
+    is_copyable = true,
+    is_affectable = true,
     side_1_reaction_triggers = {{'target'},},
     side_1_resolve_steps = {
       {action = 'reveal', active_trigger = 'reveal'},
@@ -51,6 +55,8 @@ ability_db = {
   },
 
   'Hacker' = {
+    is_copyable = true,
+    is_affectable = true,
     side_1_reaction_triggers = {{'hackable'},},
     side_1_resolve_steps = {
       {action = 'reveal', active_trigger = 'reveal'},
@@ -59,6 +65,8 @@ ability_db = {
   },
 
   'Interceptor' = {
+    is_copyable = true,
+    is_affectable = true,
     side_1_reaction_triggers = {{'interceptable'},},
     side_1_resolve_steps = {
       {action = 'reveal', active_trigger = 'reveal'},
@@ -89,6 +97,8 @@ ability_db = {
   },
 
   'Spy' = {
+    is_copyable = true,
+    is_affectable = true,
     side_1_reaction_triggers = {{'gain inspect'},},
     side_1_resolve_steps = {
       {action = 'reveal', active_trigger = 'reveal'},
