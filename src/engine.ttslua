@@ -1,0 +1,25 @@
+#include \ReMythos\src\user.ttslua
+#include \ReMythos\src\ability.ttslua
+
+state = {
+   game_status = nil, -- SETUP, STARTING, STARTED, ENDED
+   round_state = '',
+   turn_order = {},  -- circular list of colors
+   special_election_stack = {},
+   curr_president = nil, -- who the pres placard is currently on,
+   next_president = nil, -- who the next pres is if special election stack is empty
+   elected_president = nil,
+   elected_chancellor = nil,
+   policy_drawer = nil,
+   active_presidential_power = nil,
+   presidential_power_holder = nil,
+   election_tracker_step = 0, --0 to 3
+   active_abilities = {},
+   active_effects = {},
+   active_artifacts = {},
+   active_targets = {},
+   active_reaction_triggers = {},
+   num_policies_deck = nil,
+   num_policies_discard = nil,
+   users = {} --user objects
+}

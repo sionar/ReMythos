@@ -1,0 +1,24 @@
+--User class
+User = {}
+User.__index = User
+
+function User:new(player_obj, role, party, color)
+  local user = {
+    player_obj = player_obj, --from Player[color]
+    role = role, -- liberal, hitler or fascist
+    party = party, -- liberal or fascist
+    color = color, -- string i.e. White
+    is_dead = false,
+    can_vote = true,
+    can_play_abilities = true, --for Silence effects
+    was_elected = false, --for Pariah
+    can_be_president = true,
+    can_be_chancellor = true,
+    used_abilities = {},
+    unused_abilities = {},
+    used_free_abilities = {},
+    unused_free_abilities = {}, -- names of free abilities
+  }
+  setmetatable(user, User)
+  return user
+end
