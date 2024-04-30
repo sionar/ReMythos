@@ -18,6 +18,6 @@ function Effect:new(name, owner, target_color)
 end
 
 
-effect_lib = {
+effect_db = {
 
 }

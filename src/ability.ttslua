@@ -22,7 +22,7 @@ function Ability:new(name, user, source, played_round_num)
   return ability
 end
 
-ability_lib = {
+ability_db = {
 
   'Mimic' = {
     is_copyable = false,
@@ -34,7 +34,7 @@ ability_lib = {
   },
 
   'Saboteur' = {
-    side_1_reaction_triggers = {{'reveal'}},
+    side_1_reaction_triggers = {{'reveal'},},
     side_1_resolve_steps = {
       {action = 'reveal', active_trigger = 'reveal'},
       {action = 'negate'},
@@ -42,7 +42,7 @@ ability_lib = {
   },
 
   'Puppeteer' = {
-    side_1_reaction_triggers = {{'target'}},
+    side_1_reaction_triggers = {{'target'},},
     side_1_resolve_steps = {
       {action = 'reveal', active_trigger = 'reveal'},
       {action = 'choose original target', text = 'Choose the targeted player.'},
@@ -51,7 +51,7 @@ ability_lib = {
   },
 
   'Hacker' = {
-    side_1_reaction_triggers = {{'hackable'}},
+    side_1_reaction_triggers = {{'hackable'},},
     side_1_resolve_steps = {
       {action = 'reveal', active_trigger = 'reveal'},
       {action = 'play instead'},
@@ -59,12 +59,12 @@ ability_lib = {
   },
 
   'Interceptor' = {
-    side_1_reaction_triggers = {{'interceptable'}},
+    side_1_reaction_triggers = {{'interceptable'},},
     side_1_resolve_steps = {
       {action = 'reveal', active_trigger = 'reveal'},
       {action = 'play instead'},
     },
-    side_2_reaction_triggers = {{'interceptable'}},
+    side_2_reaction_triggers = {{'interceptable'},},
     side_2_resolve_steps = {
       {action = 'reveal', active_trigger = 'reveal'},
       {action = 'negate'},
@@ -80,7 +80,7 @@ ability_lib = {
       {action = 'choose from ability deck', num = 2},
       {action = 'confirmed priority'},
     },
-    side_2_reaction_triggers = {{'about to die'}},
+    side_2_reaction_triggers = {{'about to die'},},
     side_2_resolve_steps = {
       {action = 'reveal'},
       {action = 'deal party', target = 'dying'},
@@ -89,7 +89,7 @@ ability_lib = {
   },
 
   'Spy' = {
-    side_1_reaction_triggers = {{'gain inspect'}}
+    side_1_reaction_triggers = {{'gain inspect'},},
     side_1_resolve_steps = {
       {action = 'reveal', active_trigger = 'reveal'},
       {action = 'gain power', power = 'inspect', active_trigger = 'gain inspect'},

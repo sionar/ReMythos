@@ -14,6 +14,6 @@ function Artifact:new(name, owner, target_color)
 end
 
 
-artifact_lib = {
+artifact_db = {
 
 }
