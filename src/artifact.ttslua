@@ -1,0 +1,19 @@
+Artifact = {}
+Artifact.__index = Artifact
+
+function Artifact:new(name, owner, target_color)
+  local artifact = {
+    name = name,
+    owner = owner, -- player color
+    target_color = target_color, -- player color that the artifact is on
+    trigger_condition = artifact_lib[name].trigger_condition,
+    is_revealed = false,
+  }
+  setmetatable(artifact, Artifact)
+  return artifact
+end
+
+
+artifact_lib = {
+
+}

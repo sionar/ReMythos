@@ -4,12 +4,14 @@ Ability.__index = Ability
 function Ability:new(name, source)
   local ability = {
     name = name, -- name of ability
-    user = nil, -- Player object who owns this ability
-    source = source, -- {ability:nil, user:nil} 
-    is_unused = true,
+    user = nil, -- player color who owns this ability
+    source = source, -- {is_starting = false, from_ability = nil, from_user = nil}
     is_tradable = true,
-    effects = {} -- effects objects
   }
   setmetatable(ability, Ability)
   return ability
 end
+
+ability_lib = {
+
+}
