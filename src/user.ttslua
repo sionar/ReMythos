@@ -8,16 +8,15 @@ function User:new(player_obj, role, party, color)
     role = role, -- liberal, hitler or fascist
     party = party, -- liberal or fascist
     color = color, -- string i.e. White
-    is_dead = false,
+    is_alive = true,
     can_vote = true,
-    can_play_abilities = true, --for Silence effects
-    was_elected = false, --for Pariah
-    can_be_president = true,
+    can_play_abilities = true, -- for Silence effects
+    was_elected = false, -- for Pariah
+    can_be_president = true, -- false if dead
     can_be_chancellor = true,
     used_abilities = {},
     unused_abilities = {},
-    used_free_abilities = {},
-    unused_free_abilities = {}, -- names of free abilities
+    free_abilities = {}, -- names of free abilities that are playable by user
   }
   setmetatable(user, User)
   return user

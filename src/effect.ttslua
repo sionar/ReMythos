@@ -1,0 +1,13 @@
+Effect = {}
+Effect.__index = Effect
+
+function Effect:new(name, owner, effected_color, rounds_until_trigger)
+  local effect = {
+    name = name,
+    owner = owner, -- player object
+    effected_color = effected_color, -- color that the effect is on
+    rounds_until_trigger = rounds_until_trigger, -- 0 means instant
+  }
+  setmetatable(effect, Effect)
+  return effect
+end
