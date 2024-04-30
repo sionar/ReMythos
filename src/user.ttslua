@@ -9,8 +9,8 @@ function User:new(player_obj, role, party, color)
     color = color, -- 'White'
     vote = nil, -- yes, no, and nil for not voted
     is_alive = true,
-    not_hitler = false, -- visual representation (not part of base game)
-    role_outed = false,
+    is_confirmed_not_hitler = false, -- if they have been elected chancellor after Hitler Territory
+    is_confirmed_role = false, -- revealed to all if they are Liberal or Fascist
     can_vote = true,
     can_play_abilities = true, -- for Silence effects
     can_be_affected = true,
