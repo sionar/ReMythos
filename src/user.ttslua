@@ -1,0 +1,26 @@
+--User class
+User = {}
+User.__index = User
+
+function User:new(player_obj, role, party, color)
+  local user = {
+    role = role, -- 'liberal', 'hitler' or 'fascist'
+    party = party, -- 'liberal' or 'fascist'
+    color = color, -- 'White'
+    vote = nil, -- yes, no, and nil for not voted
+    is_alive = true,
+    not_hitler = false, -- visual representation (not part of base game)
+    role_outed = false,
+    can_vote = true,
+    can_play_abilities = true, -- for Silence effects
+    can_be_affected = true,
+    can_be_president = true, -- false if dead
+    can_be_chancellor = true,
+    was_elected = false, -- for Pariah
+    used_abilities = {},
+    unused_abilities = {},
+    free_abilities = {}, -- names of free abilities that are playable by user
+  }
+  setmetatable(user, User)
+  return user
+end

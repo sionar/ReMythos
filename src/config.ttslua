@@ -1,0 +1,46 @@
+config = {
+  params = {
+    num_lib_policies = 5,
+    num_fas_policies = 12,
+    max_playable_lib_policies = 5,
+    max_playable_fas_policies = 6,
+    num_starting_abilities = 3,
+    contest_window_short_secs = 1,
+    contest_window_long_secs = 5,
+    reaction_wait_secs = 5,
+    time_extension_secs = 30,
+    phase_transition_secs = 2, -- time between phases
+    ability_transition_secs = 2, -- time between resolve steps for ability
+  },
+
+  starting_presidental_powers = {
+    5 = {
+      fas_tracker = {'ability', 'ability', 'ability', 'bullet', 'bullet',}
+      lib_tracker = {nil, nil. nil, nil},
+    },
+    6 = {
+      fas_tracker = {'ability', 'ability', 'ability', 'bullet', 'bullet',}
+      lib_tracker = {nil, nil. nil, nil},
+    },
+    7 = {
+      fas_tracker = {'ability', 'inspect', 'special', 'bullet', 'bullet',}
+      lib_tracker = {nil, nil. nil, nil},
+    },
+    8 = {
+      fas_tracker = {'ability', 'inspect', 'special', 'bullet', 'bullet',}
+      lib_tracker = {nil, nil. nil, nil},
+    },
+    8 = {
+      fas_tracker = {'ability', 'inspect', 'special', 'bullet', 'bullet',}
+      lib_tracker = {nil, nil. nil, nil},
+    },
+    9 = {
+      fas_tracker = {'ability', 'inspect', 'special', 'bullet', 'bullet',}
+      lib_tracker = {nil, nil. nil, nil},
+    },
+    10 = {
+      fas_tracker = {'ability', 'inspect', 'special', 'bullet', 'bullet',}
+      lib_tracker = {nil, nil. nil, nil},
+    },
+  },
+}

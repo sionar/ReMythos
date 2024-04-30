@@ -1,0 +1,23 @@
+Effect = {}
+Effect.__index = Effect
+
+function Effect:new(name, owner, target_color)
+  local effect = {
+    name = name,
+    owner = owner, -- player color
+    target_color = target_color, -- player color that the effect is on
+    num_rounds_until_trigger = effect_lib[name].starting_num_rounds, -- 0 means instant
+    is_removable = effect_lib[name].is_removable, -- true except Banished
+    is_revealed = effect_lib[name].is_revealed_default, -- default true except Poisoner effects
+    trigger_condition = effect_lib[name].trigger_condition, -- for Protected
+    once_per_game_action = effect_lib[name].once_per_game_action,
+    used_one_time_action = false,
+  }
+  setmetatable(effect, Effect)
+  return effect
+end
+
+
+effect_lib = {
+
+}
