@@ -20,6 +20,7 @@ state = {
    election_tracker_step = 0, --0 to 3
    num_policies_to_draw = 3, -- default 3 unless Dictator is played
    turn_order = {},  -- circular list of colors
+   ability_stack = {}, -- for abilities resolving, leftmost is on top
    active_abilities = {}, -- for abilities like Lobbyist
    active_effects = {}, --
    active_artifacts = {}, -- for artifacts like Staff
