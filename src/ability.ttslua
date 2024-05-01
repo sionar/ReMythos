@@ -11,10 +11,10 @@ function Ability:new(name, user, source, played_round_num)
     is_copyable = ability[name].is_copyable,
     is_affectable = ability[name].is_affectable,
     side_1_conditions = ability[name].side_1_conditions or nil,
-    side_1_reaction_triggers = ability[name].side_1_reaction_triggers or nil,
+    side_1_reaction_trigger = ability[name].side_1_reaction_trigger or nil,
     side_1_resolve_steps = ability[name].side_1_resolve_steps or nil,
     side_2_conditions = ability[name].side_2_conditions or nil,
-    side_2_reaction_triggers = ability[name].side_2_reaction_triggers or nil,
+    side_2_reaction_trigger = ability[name].side_2_reaction_trigger or nil,
     side_2_resolve_steps = ability[name].side_2_resolve_steps or nil,
     resolve_step_num = 0, -- current resolve step
   }
@@ -36,9 +36,9 @@ ability_db = {
   'Saboteur' = {
     is_copyable = true,
     is_affectable = true,
-    side_1_reaction_triggers = {{'reveal'},},
+    side_1_reaction_trigger = 'reveal',
     side_1_resolve_steps = {
-      {action = 'reveal', active_trigger = 'reveal'},
+      {action = 'reveal'},
       {action = 'negate'},
     },
   },
@@ -46,20 +46,20 @@ ability_db = {
   'Puppeteer' = {
     is_copyable = true,
     is_affectable = true,
-    side_1_reaction_triggers = {{'target'},},
+    side_1_reaction_trigger = 'puppeteer',
     side_1_resolve_steps = {
-      {action = 'reveal', active_trigger = 'reveal'},
-      {action = 'choose original target', text = 'Choose the targeted player.'},
-      {action = 'target', active_trigger = 'target', text = 'Target a new player.'},
+      {action = 'reveal'},
+      {action = 'choose original target'},
+      {action = 'target', use_original_conditions = true},
     },
   },
 
   'Hacker' = {
     is_copyable = true,
     is_affectable = true,
-    side_1_reaction_triggers = {{'hackable'},},
+    side_1_reaction_trigger = 'hacker',
     side_1_resolve_steps = {
-      {action = 'reveal', active_trigger = 'reveal'},
+      {action = 'reveal', active_triggers = {'reveal', 'hacker'}},
       {action = 'play instead'},
     },
   },
@@ -67,14 +67,14 @@ ability_db = {
   'Interceptor' = {
     is_copyable = true,
     is_affectable = true,
-    side_1_reaction_triggers = {{'interceptable'},},
+    side_1_reaction_trigger = 'interceptor',
     side_1_resolve_steps = {
-      {action = 'reveal', active_trigger = 'reveal'},
+      {action = 'reveal'},
       {action = 'play instead'},
     },
-    side_2_reaction_triggers = {{'interceptable'},},
+    side_2_reaction_trigger = 'interceptor',
     side_2_resolve_steps = {
-      {action = 'reveal', active_trigger = 'reveal'},
+      {action = 'reveal'},
       {action = 'negate'},
     },
   },
@@ -84,31 +84,69 @@ ability_db = {
     is affectable = false,
     side_1_resolve_steps = {
       {action = 'reveal'},
-      {action = 'deal party', target = 'self'},
+      {action = 'reveal party', target = 'self'},
       {action = 'choose from ability deck', num = 2},
-      {action = 'confirmed priority'},
+      {action = 'choose confirmed priority'},
     },
-    side_2_reaction_triggers = {{'about to die'},},
+    side_2_reaction_trigger = 'about to die',
     side_2_resolve_steps = {
       {action = 'reveal'},
-      {action = 'deal party', target = 'dying'},
-      {action = 'confirmed choose to die'},
+      {action = 'reveal party', target = 'dying'},
+      {action = 'choose to die'},
     },
   },
 
   'Spy' = {
     is_copyable = true,
     is_affectable = true,
-    side_1_reaction_triggers = {{'gain inspect'},},
+    side_1_reaction_trigger = 'spy',
     side_1_resolve_steps = {
-      {action = 'reveal', active_trigger = 'reveal'},
-      {action = 'gain power', power = 'inspect', active_trigger = 'gain inspect'},
+      {action = 'reveal'},
+      {action = 'gain power', power = 'inspect', active_triggers = {'spy'}},
     },
     side_2_resolve_steps = {
-      {action = 'reveal', active_trigger = 'reveal'},
-      {action = 'deal party', target = 'self'},
-      {action = 'target', spy = true, active_trigger = 'target'},
-      {action = 'take', active_trigger = 'take'},
+      {action = 'reveal party', target = 'self'},
+      {action = 'reveal', active_triggers = {'reveal'}},
+      {action = 'target', mode = 'spy', conditions = {'not self'}},
+      {action = 'take', choose = false, active_triggers = {'jester'}},
+    },
+  },
+
+  'Martyr' = {
+    is_copyable = true,
+    is_affectable = true,
+    side_1_conditions = {{'before voting'}},
+    side_1_resolve_steps = {
+      {action = 'reveal', active_triggers = {'reveal', 'hacker'}},
+      {action = 'reshuffle'},
+      {action = 'choose policy'},
+      {action = 'play policy'},
+      {action = 'gain power'},
+      {action = 'use power'},
+      {action = 'reshuffle'},
+      {action = 'kill', target = 'self', reveal_role = false},
+    },
+  },
+
+  'Broker' = {
+    is_copyable = true,
+    is_affectable = true,
+    side_1_resolve_steps = {
+      {action = 'reveal'},
+      {action = 'target', num_targets = 2, conditions = {'not self'}},
+      {action = 'swap cards', choose = false, num_cards = 'all', active_triggers = {'jester'}},
+    },
+  },
+
+  'Harbinger' = {
+    is_copyable = true,
+    is_affectable = true,
+    side_1_conditions = {{'both tracks full'}, {'both tracks empty'}},
+    side_1_resolve_steps = {
+      {action = 'reveal', active_triggers = {'reveal', 'hacker'}},
+      {action = 'draw artifacts', num_artifacts = 4},
+      {action = 'target', num_targets = 2},
+      {action = 'swap cards', choose = false, num_cards = 'all', active_triggers = {'jester'}},
     },
   },
 }
