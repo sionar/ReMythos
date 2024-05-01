@@ -3,6 +3,7 @@
 
 state = {
    game_status = nil, -- SETUP, STARTING, STARTED, ENDED
+   round_num = 1,
    round_state = '',
    curr_president = nil, -- who the pres placard is currently on,
    next_president = nil, -- who the next pres is if special election stack is empty
