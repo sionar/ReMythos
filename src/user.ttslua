@@ -8,7 +8,7 @@ function User:new(player_obj, role, party, color)
     party = party, -- 'liberal' or 'fascist'
     color = color, -- 'White'
     vote = nil, -- yes, no, and nil for not voted
-    vote_weight = 1,
+    vote_weight = 1, -- 3 for lobbyist
     vote_forced = false,
     is_alive = true,
     is_confirmed_not_hitler = false, -- if they have been elected chancellor after Hitler Territory
@@ -18,6 +18,7 @@ function User:new(player_obj, role, party, color)
     can_be_affected = true,
     can_be_president = true, -- false if dead
     can_be_chancellor = true,
+    can_play_another_ability = true, -- true if user hasn't played any regular abilities
     was_elected = false, -- for Pariah
     used_abilities = {},
     unused_abilities = {},

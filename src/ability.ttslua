@@ -1,12 +1,16 @@
 Ability = {}
 Ability.__index = Ability
 
-function Ability:new(name, user, source, played_round_num)
+function Ability:new(name, user, played_round_num)
   local ability = {
     name = name, -- name of ability
     user = user, -- player color who owns this ability
+    playable = nil, -- can be played by user
     source = source, -- {is_starting = false, from_ability = nil, from_user = nil}
     played_round_num = played_round_num,
+    is_starting_card = nil,
+    from_ability = nil, -- came from an ability like Reporter or Mentor
+    from_user = nil, -- from Trader or Broker
     is_tradable = true,
     is_not_copyable = ability[name].is_not_copyable or false,
     is_not_affectable = ability[name].is_not_affectable or false,
@@ -77,6 +81,7 @@ ability_db = {
       {action = 'reveal'},
       {action = 'reveal party', target = 'self'},
       {action = 'choose from ability deck', num_abilities = 2},
+      {action = 'give abilities', target = 'self'},
       {action = 'choose confirmed priority'},
     },
     side_2_reaction_triggers = {'about to die'},
@@ -127,7 +132,8 @@ ability_db = {
     side_1_conditions = {{'both tracks full'}, {'both tracks empty'}},
     side_1_resolve_steps = {
       {action = 'reveal', active_triggers = {'reveal', 'hacker'}},
-      {action = 'draw artifacts', mode = 'harbinger', num_discard = 2},
+      {action = 'check harbinger bonus'},
+      {action = 'draw artifacts', num_drawn = 4, num_discard = 2},
       {action = 'target', num_targets = 2},
       {action = 'give artifacts', target = 'targets'},
     },
@@ -140,12 +146,13 @@ ability_db = {
       {action = 'reveal'},
       {action = 'reveal party', target = 'self'},
       {action = 'reshuffle'},
-      {action = 'play policy', own_party = true},
+      {action = 'check underdog party'},
+      {action = 'play policy', party = nil},
       {action = 'gain power'},
       {action = 'use power'},
       {action = 'reshuffle'},
       {action = 'choose from ability deck', num_abilities = 1},
-      {action = 'make abilities free'},
+      {action = 'give abilities', target = 'self', free = true},
     },
   },
 
@@ -194,8 +201,10 @@ ability_db = {
   'Esper' = {
     side_1_resolve_steps = {
       {action = 'reveal'},
-      {action = 'draw esper cards'},
-      {action = 'reveal esper card'},
+      {action = 'check esper policies'},
+      {action = 'draw abilities', num_drawn = nil, num_discard = nil},
+      {action = 'give abilities', target = 'self', free = true},
+      {action = 'play ability'},
     },
   },
 
@@ -251,7 +260,7 @@ ability_db = {
     side_1_conditions = {{'before voting', 'after hitler territory'}},
     side_1_resolve_steps = {
       {action = 'reveal', active_triggers = {'reveal', 'hacker'}},
-      {action = 'peacemaker'},
+      {action = 'destroy artifacts and effects'},
     },
   },
 
@@ -266,7 +275,7 @@ ability_db = {
   'Pacifist' = {
     side_1_resolve_steps = {
       {action = 'reveal', active_triggers = {'reveal', 'hacker'}},
-      {action = 'pacifist'},
+      {action = 'disable next power'},
     },
     side_2_resolve_steps = {
       {action = 'reveal'},
@@ -287,8 +296,8 @@ ability_db = {
     side_1_conditions = {{'before voting', 'lobbyist not active'}},
     side_1_resolve_steps = {
       {action = 'reveal'},
-      {action = 'set active'}
-      {action = 'lobbyist'},
+      {action = 'set active ability'},
+      {action = 'set lobbyist vote'},
     },
   },
 
@@ -296,6 +305,7 @@ ability_db = {
     side_1_resolve_steps = {
       {action = 'reveal'},
       {action = 'target', num_players = 1, conditions = {'not self'}},
+      {action = 'look abilities', target = 'target', active_triggers = {'jester'}},
       {action = 'give effect', effect_name = 'Tracked', target = 'target'},
     },
   },
@@ -319,31 +329,143 @@ ability_db = {
       {action = 'target', num_players = 1, conditions = {'not self'}},
       {action = 'name ability'},
       {action = 'look abilities', target = 'target', active_triggers = {'jester'}},
-      {action = 'take abilities', target = 'target', mode = 'scion', active_triggers = {'jester'}},
+      {action = 'take abilities', target = 'target', active_triggers = {'jester'}},
     },
     side_2_resolve_steps = {
       {action = 'reveal', active_triggers = {'reveal', 'interceptor'}},
-      {action = 'name ability'},
-      {action = 'reveal third of deck'},
-      {action = 'scion ability'},
-    }
+      {action = 'name ability'},  -- sets ability.named_ability
+      {action = 'check ability deck size'},
+      {action = 'reveal abilities'},
+      {action = 'gain ability', free = true},
+      {action = 'discard abilities', num = nil},
+    },
   },
 
   'Knight' = {
     side_1_resolve_steps = {
       {action = 'reveal', active_triggers = {'reveal', 'hacker'}},
-      {action = 'target', num_players = 1, conditions = {'not self', 'has artifact or effect'}}
+      {action = 'target', num_players = 1, conditions = {'not self', 'has artifact or effect'}},
       {action = 'receive artifact or effect'},
       {action = 'set artifact owner', target = 'self'},
   },
 
   'Surgeon' = {
-    side_1_conditions = {{'after reshuffle', 'seven cards in policy deck'}}
+    side_1_conditions = {{'after reshuffle', 'seven cards in policy deck'}},
     side_1_resolve_steps = {
       {action = 'reveal', active_triggers = {'reveal', 'hacker'}},
       {action = 'draw policies', num_drawn = 6, num_to_policy = 4, num_to_discard = 2},
       {action = 'shuffle policy deck'},
     },
   },
-  
+
+  'Jester' = {
+    side_1_resolve_steps = {
+      {action = 'reveal', active_triggers = {'reveal', 'hacker'}},
+      {action = 'reshuffle'},
+    },
+    side_2_conditions = {{'taking from user'}},
+    side_2_reaction_triggers = {{'jester'}},
+    side_2_resolve_steps = {
+      {action = 'reveal', active_triggers = {'reveal'}},
+      {action = 'check jester target'},
+      {action = 'negate'},
+      {action = 'take ability', choose = true, active_triggers = {'jester'}, free = true},
+    },
+  },
+
+  'Usurper' = {
+    side_1_resolve_steps = {
+      {action = 'reveal', active_triggers = {'reveal', 'hacker'}},
+      {action = 'special election', target = 'self'},
+    },
+    side_2_resolve_steps = {
+      {action = 'reveal', active_triggers = {'reveal', 'hacker'}},
+      {action = 'take chancellorship', target = 'self'},
+    },
+  },
+
+  'Mentor' = {
+    side_1_resolve_steps = {
+      {action = 'reveal', active_triggers = {'reveal', 'interceptor'}},
+      {action = 'target', num_players = 1},
+      {action = 'discard unused abilities'},
+      {action = 'draw abilities', num_drawn = nil, num_discard = 0},
+    },
+  },
+
+  'Assassin' = {
+    side_1_conditions = {{'before voting', 'after hitler territory'}},
+    side_1_resolve_steps = {
+      {action = 'reveal'},
+      {action = 'target', num_players = 1, conditions = {'not self'}},
+      {action = 'give effect', effect_name = 'Death Sentence', target = 'target'},
+    },
+  },
+
+  'Poisoner' = {
+    side_1_conditions = {{'after hitler territory'}},
+    side_1_resolve_steps = {
+      {action = 'reveal'},
+      {action = 'draw poisoner effects'},
+      {action = 'target', num_players = 4, conditions = {'not self'}},
+      {action = 'give poisoner effects'},
+    },
+  },
+
+  'Specter' = {
+    is_playable_when_dead = true,
+    side_1_conditions = {{'dead'}},
+    side_1_resolve_steps = {
+      {action = 'reveal'},
+      {action = 'check num artifacts'},
+      {action = 'draw artifacts', num_drawn = nil, num_discard = nil},
+      {action = 'target', num_targets = 1},
+      {action = 'give artifacts', target = 'targets'},
+    },
+  },
+
+  'Spiritualist' = {
+    side_1_resolve_steps = {
+      {action = 'reveal'},
+      {action = 'target', num_players = 1, conditions = {'dead'}},
+      {action = 'give effect', effect_name = 'Death Sentence', target = 'target'},
+    },
+  },
+
+  'Messiah' = {
+    is_playable_when_dead = true,
+    side_1_conditions = {{'before voting, not dead'}},
+    side_1_resolve_steps = {
+      {action = 'reveal'},
+      {action = 'set active ability'},
+      {action = 'trigger messiah', targets = 'all'},
+    },
+    side_2_conditions = {{'dead'}},
+    side_2_resolve_steps = {
+      {action = 'reveal'},
+      {action = 'set active ability'},
+      {action = 'trigger messiah', targets = 'self'},
+      {action = 'set '}
+    },
+  },
+
+  'Denouncer' = {
+    side_1_conditions = {{'before voting'}},
+    side_1_resolve_steps = {
+      {action = 'reveal'},
+      {action = 'target', num_players = 1, conditions = {'not self'}},
+      {action = 'give effect', effect_name = 'Unpopular', target = 'target'},
+    },
+  },
+
+  'Avenger' = {
+    side_1_reaction_triggers = {'avenger'},
+    side_1_resolve_steps = {
+      {action = 'reveal'},
+      {action = 'target', num_players = 1, conditions = {'downvoted user'}},
+      {action = 'take ability', choose = true, active_triggers = {'jester'}, free = true},
+    },
+  },
+
+
 }
