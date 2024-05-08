@@ -3,15 +3,17 @@
 
 state = {
    game_status = nil, -- SETUP, STARTING, STARTED, ENDED
+   round_num = 1,
    round_state = '',
-   curr_president = nil, -- who the pres placard is currently on,
-   next_president = nil, -- who the next pres is if special election stack is empty
+   curr_president = nil, -- player color who the pres placard is currently on,
+   next_president = nil, -- player color who the next pres is if special election stack is empty
    elected_president = nil,
    elected_chancellor = nil,
-   policy_drawer = nil, -- defaults to curr_president
+   policy_drawer = nil, -- defaults to elected_president
    active_presidential_power = nil, -- set when player gains power or power is topdecked
-   presidential_power_holder = nil, -- player color that holds presidential power
-   deck_reshuffled = false,
+   presidential_power_holder = nil, -- player color who holds presidential power
+   current_ability_player = nil, -- player color that is currently playing an ability
+   is_deck_reshuffled = false,
    is_hitler_territory = false,
    num_policies_in_deck = nil,
    num_policies_in_discard = nil,
@@ -26,7 +28,9 @@ state = {
    active_artifacts = {}, -- for artifacts like Staff
    active_targets = {},
    active_reaction_triggers = {},
+   cards_to_give = {}, -- for resolving abilities that give abilities or artifacts
    special_election_stack = {},
    available_presidential_powers = {},
+   contest_order = {}, -- first element has highest priority
    users = {}, --user objects
 }
